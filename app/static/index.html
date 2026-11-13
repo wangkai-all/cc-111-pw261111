@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>商品编码关联规则台</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">K</span>
+      <div>
+        <h1>商品编码关联规则台</h1>
+        <p>两份多语言商品数据 · 逐项规则 · 碰撞确认 · 版本对比</p>
+      </div>
+    </div>
+    <div class="topbar-status">
+      <span id="version-pill" class="pill">未保存版本</span>
+      <span id="rule-fingerprint" class="mono muted small">—</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="panel" id="panel-data">
+    <div class="panel-head">
+      <div>
+        <h2>1 · 数据导入</h2>
+        <p class="muted">原始值只读取、不覆盖。先确认文件编码，再选择关联列。</p>
+      </div>
+      <button class="ghost" id="load-samples">载入中英文 / 土耳其语样本</button>
+    </div>
+    <div class="sides" id="sides"></div>
+  </section>
+
+  <section class="panel" id="panel-rules">
+    <div class="panel-head">
+      <div>
+        <h2>2 · 编码与清洗规则</h2>
+        <p class="muted">每项单独选择；带 <span class="warn-mark">!</span> 的选项会改变业务含义，需要明确选择。</p>
+      </div>
+      <div class="panel-actions">
+        <button class="ghost" id="reset-rules">恢复保守默认</button>
+        <span class="muted small" id="destructive-count"></span>
+      </div>
+    </div>
+    <div class="rule-layout">
+      <div class="rule-list" id="rule-list"></div>
+      <aside class="preview-box">
+        <div class="preview-head">
+          <h3>规则预览</h3>
+          <span class="muted small">原始键 → 整理后的键，以及整理后撞在一起的写法</span>
+        </div>
+        <div class="probe-table-wrap">
+          <table class="probe-table">
+            <thead>
+              <tr><th>原始键</th><th>整理后</th><th>变化</th><th>碰撞</th></tr>
+            </thead>
+            <tbody id="probe-body"></tbody>
+          </table>
+        </div>
+        <div class="preview-foot">
+          <span class="muted small">自定义探针：</span>
+          <input id="probe-input" type="text" maxlength="200" placeholder="输入一个真实编码试一下">
+          <button class="ghost" id="probe-add">加入预览</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-results">
+    <div class="panel-head">
+      <div>
+        <h2>3 · 关联结果</h2>
+        <p class="muted" id="results-subtitle">载入两侧数据后自动计算。</p>
+      </div>
+      <div class="panel-actions">
+        <label class="inline-field">对比基线
+          <select id="baseline-select"><option value="">（不对比）</option></select>
+        </label>
+        <button class="ghost" id="export-csv">下载结果 CSV</button>
+        <button class="ghost" id="export-rules">下载规则 JSON</button>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="tabs" id="tabs" role="tablist">
+      <button class="tab active" data-tab="matches" role="tab">已匹配</button>
+      <button class="tab" data-tab="collisions" role="tab">碰撞待确认 <span class="tab-badge" id="tab-collisions-count">0</span></button>
+      <button class="tab" data-tab="duplicates" role="tab">重复键与可能匹配</button>
+      <button class="tab" data-tab="unmatched" role="tab">未匹配</button>
+      <button class="tab" data-tab="excluded" role="tab">排除</button>
+      <button class="tab" data-tab="diff" role="tab">版本变更</button>
+    </div>
+    <div id="tab-body" class="tab-body"></div>
+  </section>
+
+  <section class="panel" id="panel-versions">
+    <div class="panel-head">
+      <div>
+        <h2>4 · 规则版本</h2>
+        <p class="muted">规则、关联列、次级字段与碰撞决定一起固化；改动后可看到新增、失效与冲突。</p>
+      </div>
+      <button class="ghost" id="save-run">保存运行快照</button>
+    </div>
+    <div class="version-form">
+      <label>版本名称 <input id="version-label" type="text" maxlength="120" placeholder="例如：统一全角并保留前导零"></label>
+      <label>备注 <input id="version-note" type="text" maxlength="500" placeholder="可选：本次调整原因"></label>
+      <button class="primary" id="save-version">保存为版本</button>
+    </div>
+    <div id="version-list" class="version-list"></div>
+  </section>
+</main>
+
+<div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="行详情">
+  <div class="drawer-head">
+    <h3 id="drawer-title">行详情</h3>
+    <button class="icon-btn" id="drawer-close" aria-label="关闭">×</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
